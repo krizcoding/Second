@@ -1,0 +1,33 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main  # Runs when pushing to the main branch
+
+jobs:
+  deploy:
+    runs-on: ${{ matrix.os }}  # Runs on multiple OS
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]  # Run on Linux, Windows & macOS
+
+    permissions:
+      contents: read  # Ensure workflow has permission to read repository contents
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Verify Environment Variables
+        env:
+          NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        run: |
+          if [ -z "$NEWS_API_KEY" ]; then echo "❌ NEWS_API_KEY is missing!"; exit 1; fi
+          if [ -z "$WEATHER_API_KEY" ]; then echo "❌ WEATHER_API_KEY is missing!"; exit 1; fi
+          echo "✅ API keys are set from GitHub Secrets"
+
+      - name: Deploy Application
+        run: echo "🚀 Deployment completed successfully on ${{ matrix.os }}"

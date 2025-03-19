@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="card weather-box">
+            <h2>Weather Updates</h2>
+            <p><strong>City:</strong> {{ weather.location.name }}</p>
+            <p><strong>Temperature:</strong> {{ weather.current.temp_c }}°C</p>
+            <p><strong>Humidity:</strong> {{ weather.current.humidity }}%</p>
+            <p><strong>Wind Speed:</strong> {{ weather.current.wind_kph }} km/h</p>
+            <p><strong>Condition:</strong> {{ weather.current.condition.text }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Latest News</h2>
+            <div class="news-box">      
+            <button class="nav-button left-button" onclick="scrollNews(-1)">&#10094;</button>
+            <div class="news-list">
+                {% for article in news %}
+                    <div class="news-item">
+                        <img src="{{ article.urlToImage }}" alt="News Image">
+                        <a href="{{ article.url }}" target="_blank">{{ article.title }}</a>
+                        <p>- {{ article.source.name }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="nav-button right-button" onclick="scrollNews(1)">&#10095;</button>
+            </div>
+        </div>
+
+        <div class="card stock-box">
+            <h2>Stock Market</h2>
+            <p><strong>Stock Symbol:</strong> AAPL</p>
+            <p><strong>Price:</strong> ${{ stock_price }}</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const newsList = document.querySelector(".news-list");
+            const newsItems = document.querySelectorAll(".news-item");
+            const totalItems = newsItems.length;
+            let index = 0;
+
+        function scrollNews(direction) {
+            index += direction;
+
+        if (index < 0) {
+            index = totalItems - 1; // Loop back to last item
+        } else if (index >= totalItems) {
+            index = 0; // Loop back to first item
+        }
+
+        const scrollAmount = newsItems[0].offsetWidth; // Use item width instead of container
+        newsList.scrollTo({ left: scrollAmount * index, behavior: "smooth" });
+    }
+
+    document.querySelector(".left-button").addEventListener("click", () => scrollNews(-1));
+    document.querySelector(".right-button").addEventListener("click", () => scrollNews(1));
+    });
+    </script>    
+</body>
+</html>
