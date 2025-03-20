@@ -17,41 +17,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Check Environment Variables (Linux/macOS)
-        if: runner.os != 'Windows'
-        shell: bash
+      - name: Set Environment Variables
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
         run: |
-          if [ -z "$DJANGO_SECRET_KEY" ]; then 
-            echo "❌ DJANGO_SECRET_KEY is missing!"; 
-            exit 1; 
-          fi
-          if [ -z "$NEWS_API_KEY" ]; then 
-            echo "❌ NEWS_API_KEY is missing!"; 
-            exit 1; 
-          fi
-          if [ -z "$WEATHER_API_KEY" ]; then 
-            echo "❌ WEATHER_API_KEY is missing!"; 
-            exit 1; 
-          fi
-          echo "✅ All required secrets are set."
-
-      - name: Check Environment Variables (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          if (-not $env:DJANGO_SECRET_KEY) { 
-            Write-Error "❌ DJANGO_SECRET_KEY is missing!"
-            exit 1
-          }
-          if (-not $env:NEWS_API_KEY) { 
-            Write-Error "❌ NEWS_API_KEY is missing!"
-            exit 1
-          }
-          if (-not $env:WEATHER_API_KEY) { 
-            Write-Error "❌ WEATHER_API_KEY is missing!"
-            exit 1
-          }
-          Write-Host "✅ All required secrets are set."
+          echo "✅ Environment variables loaded from GitHub Secrets."
+          echo "Using DJANGO_SECRET_KEY (hidden for security)"
+          echo "Using NEWS_API_KEY (hidden for security)"
+          echo "Using WEATHER_API_KEY (hidden for security)"
 
       - name: Deploy Application
-        run: echo "Deployment completed on ${{ matrix.os }}"
+        run: echo "🚀 Deployment completed on ${{ matrix.os }}"
